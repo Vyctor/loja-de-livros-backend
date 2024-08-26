@@ -5,6 +5,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { EnvironmentService } from './config/environment.service';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AuthorModule } from './author/author.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AuthorModule } from './author/author.module';
       }),
     }),
     AuthorModule,
+    CategoryModule,
   ],
   controllers: [],
   providers: [],

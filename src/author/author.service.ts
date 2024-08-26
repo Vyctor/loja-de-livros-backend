@@ -40,6 +40,7 @@ export class AuthorService {
       maxLimit: 50,
       searchableColumns: ['name', 'email'],
     });
+
     if (result.data.length === 0) {
       this.logger.warn('Nenhum autor encontrado.');
       throw new NotFoundException('Nenhum autor encontrado.');
