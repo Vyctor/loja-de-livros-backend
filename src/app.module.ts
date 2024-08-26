@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from './config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as redisStore from 'cache-manager-redis-store';
 import { EnvironmentService } from './config/environment.service';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
-import * as redisStore from 'cache-manager-redis-store';
+import { AuthorModule } from './author/author.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import * as redisStore from 'cache-manager-redis-store';
         database: environmentService.DB_NAME,
         username: environmentService.DB_USER,
         password: environmentService.DB_PASS,
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
         logging: true,
       }),
@@ -31,6 +33,7 @@ import * as redisStore from 'cache-manager-redis-store';
         port: environmentService.REDIS_PORT,
       }),
     }),
+    AuthorModule,
   ],
   controllers: [],
   providers: [],

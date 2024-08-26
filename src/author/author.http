@@ -1,0 +1,13 @@
+### CREATE AUTHOR
+POST http://localhost:3000/author
+Content-Type: application/json
+
+{
+    "name": "Vyctor Guimarães",
+    "email": "vvguimaraes@gmailcom.com",
+    "description": "Vyctor is a writer and a poet."
+}
+
+### FIND ALL
+GET http://localhost:3000/author
+Content-Type: application/json
