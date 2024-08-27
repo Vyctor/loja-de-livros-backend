@@ -17,3 +17,7 @@ Content-Type: application/json
 ### FIND ALL
 GET http://localhost:3000/book
 Content-Type: application/json
+
+### FIND BY ID
+GET http://localhost:3000/book/199
+Content-Type: application/json

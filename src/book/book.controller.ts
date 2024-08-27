@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookService } from './book.service';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
@@ -16,5 +24,10 @@ export class BookController {
   @Get()
   async findAll(@Paginate() query: PaginateQuery) {
     return this.bookService.findAll(query);
+  }
+
+  @Get(':id')
+  async findByID(@Param('id', new ParseIntPipe()) id: number) {
+    return this.bookService.findById(id);
   }
 }

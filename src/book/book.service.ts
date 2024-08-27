@@ -48,6 +48,14 @@ export class BookService {
     return book;
   }
 
+  async findById(id: number) {
+    const book = await this.bookRepository.findOne({
+      where: { id },
+      relations: ['author', 'category'],
+    });
+    return book ?? new NotFoundException('Livro não encontrado.');
+  }
+
   async findAll(query: PaginateQuery) {
     const result = await paginate(query, this.bookRepository, {
       sortableColumns: [
