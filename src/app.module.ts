@@ -7,6 +7,7 @@ import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AuthorModule } from './author/author.module';
 import { CategoryModule } from './category/category.module';
 import { BookModule } from './book/book.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BookModule } from './book/book.module';
     AuthorModule,
     CategoryModule,
     BookModule,
+    AddressModule,
   ],
   controllers: [],
   providers: [],

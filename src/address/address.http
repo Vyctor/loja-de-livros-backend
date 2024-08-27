@@ -1,0 +1,26 @@
+### CREATE AUTHOR
+POST http://localhost:3000/address/country
+Content-Type: application/json
+
+{
+    "name": "Brasil"
+}
+
+
+### Create STATE
+POST http://localhost:3000/address/state
+Content-Type: application/json
+
+{
+    "name": "Amazonas",
+    "countryId": 1
+}
+
+### FIND ALL COUNTRIES
+GET http://localhost:3000/address/country
+Content-Type: application/json
+
+### FIND ALL COUNTRIES STATES
+GET http://localhost:3000/address/country/1/states
+Content-Type: application/json
+

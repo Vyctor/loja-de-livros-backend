@@ -24,5 +24,9 @@ O objetivo consiste em criar uma loja de livros online similar a Casa do Código
 - [ ] Autenticação
 - [x] Cadastro de Livro
 - [x] Listagem de Livro
+- [x] Cadastro de país
+- [x] Cadastro de estados
+- [x] Listagem de países
+- [x] Listagem de estados por país
 - [ ] Cadastro de Usuário
 - [ ] Separação de entidades de domínio e entidades de banco de dados

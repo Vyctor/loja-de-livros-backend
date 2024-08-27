@@ -43,7 +43,7 @@ export class Book {
   releaseDate: Date;
 
   @ManyToOne(() => Category)
-  @JoinColumn()
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @ManyToOne(() => Author)
