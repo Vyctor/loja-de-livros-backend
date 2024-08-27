@@ -6,6 +6,7 @@ import { EnvironmentService } from './config/environment.service';
 import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { AuthorModule } from './author/author.module';
 import { CategoryModule } from './category/category.module';
+import { BookModule } from './book/book.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CategoryModule } from './category/category.module';
     }),
     AuthorModule,
     CategoryModule,
+    BookModule,
   ],
   controllers: [],
   providers: [],
