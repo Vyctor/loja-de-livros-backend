@@ -22,7 +22,7 @@ O objetivo consiste em criar uma loja de livros online similar a Casa do Código
 - [ ] Cache de rotas
 - [ ] Testes automatizados
 - [ ] Autenticação
-- [ ] Cadastro de Livro
-- [ ] Listagem de Livro
+- [x] Cadastro de Livro
+- [x] Listagem de Livro
 - [ ] Cadastro de Usuário
 - [ ] Separação de entidades de domínio e entidades de banco de dados
