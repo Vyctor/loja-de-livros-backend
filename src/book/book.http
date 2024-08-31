@@ -3,12 +3,12 @@ POST http://localhost:3000/book
 Content-Type: application/json
 
 {
-    "title": "Vyctor Vieira Guimarães",
+    "title": "Vyctor Vieira Guimarães 3",
     "synopsis": "vvguimaraes@gmailcom.com",
     "summary": "Vyctor is a writer and a poet.",
     "price": 20.00,
     "pages": 150,
-    "isbn": "978-4-16-148410-0",
+    "isbn": "978-4-16-148410-1",
     "releaseDate": "2024-12-12",
     "categoryId": 1,
     "authorId": 1

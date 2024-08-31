@@ -5,6 +5,7 @@ import { Country } from './address/entities/country.entity';
 import { State } from './address/entities/state.entity';
 import { Author } from './author/entities/author.entity';
 import { Category } from './category/entities/category.entity';
+import { Book } from './book/entities/book.entity';
 
 @Injectable()
 export class InitialSeedService {
@@ -196,6 +197,49 @@ export class InitialSeedService {
           await manager.save(
             manager.create(Category, {
               ...category,
+            }),
+          );
+        }
+      }
+    });
+  }
+
+  async seedBooks(): Promise<void> {
+    const booksPayload = [
+      {
+        title: 'Livro 1',
+        synopsis: 'vvguimaraes@gmailcom.com',
+        summary: 'Vyctor is a writer and a poet.',
+        price: 20.0,
+        pages: 150,
+        isbn: '978-4-16-148410-1',
+        releaseDate: '2024-12-12',
+        categoryId: 1,
+        authorId: 1,
+      },
+      {
+        title: 'Livro 2',
+        synopsis: 'vvguimaraes@gmailcom.com',
+        summary: 'Vyctor is a writer and a poet.',
+        price: 20.0,
+        pages: 150,
+        isbn: '978-4-16-148410-2',
+        releaseDate: '2024-12-12',
+        categoryId: 1,
+        authorId: 1,
+      },
+    ];
+
+    await this.dataSource.transaction(async (manager) => {
+      for (const book of booksPayload) {
+        const exists = await manager.findOne(Book, {
+          where: { isbn: book.isbn },
+        });
+
+        if (!exists?.id) {
+          await manager.save(
+            manager.create(Book, {
+              ...book,
             }),
           );
         }

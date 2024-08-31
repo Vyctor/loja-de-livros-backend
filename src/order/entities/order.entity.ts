@@ -6,6 +6,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum OrderStatus {
+  'CREATED',
+  'PAYMENT_PENDING',
+  'PAYMENT_CONFIRMED',
+  'PAYMENT_FAILED',
+  'SHIPPED',
+  'DELIVERED',
+  'CANCELLED',
+  'REFUND_REQUESTED',
+  'REFUNDED',
+}
+
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
@@ -14,8 +26,10 @@ export class Order {
   @Column()
   total: number;
 
-  @Column()
-  status: number;
+  @Column({
+    enum: OrderStatus,
+  })
+  status: OrderStatus;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,0 +1,39 @@
+### CREATE AN ORDER
+POST http://localhost:3000/order/checkout
+Content-Type: application/json
+
+{
+  "total": 80.00,
+  "status": "PENDING",
+  "client": {
+    "email": "john.doe@example.com",
+    "name": "John",
+    "surname": "Doe",
+    "document": "123.456.789-10",
+    "country_id": 1,
+    "state_id": 2,
+    "street_name": "Main Street",
+    "street_number": "123",
+    "complement": "Apt 45",
+    "zip_code": "12345-678",
+    "phone": "+55 11 98765-4321"
+  },
+  "items": [
+    {
+      "quantity": 2,
+      "book_id": 1
+    },
+    {
+      "quantity": 2,
+      "book_id": 2
+    }
+  ],
+  "payment": {
+    "type": "CREDIT_CARD",
+    "card_brand": "VISA",
+    "card_number": "4111111111111111",
+    "card_holder": "John Doe",
+    "card_expiration": "12/25",
+    "card_cvv": "123"
+  }
+}
