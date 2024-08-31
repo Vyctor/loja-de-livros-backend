@@ -1,3 +1,7 @@
+### GET ORDER BY ID
+GET http://localhost:3000/order/1
+Content-Type: application/json
+
 ### CREATE AN ORDER
 POST http://localhost:3000/order/checkout
 Content-Type: application/json

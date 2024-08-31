@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -23,6 +24,50 @@ export class OrderService {
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
+
+  async findById(id: number) {
+    const response = await this.dataSource.transaction(async (manager) => {
+      const order = await manager.findOne(Order, {
+        where: { id },
+      });
+
+      const client = await manager.findOne(OrderClient, {
+        where: { order: { id } },
+        relations: ['country', 'state'],
+        select: {
+          country: {
+            id: true,
+            name: true,
+          },
+          state: {
+            id: true,
+            name: true,
+          },
+        },
+      });
+      const items = await manager.find(OrderItem, {
+        where: { order: { id } },
+        relations: ['book'],
+      });
+
+      const payment = await manager.findOne(OrderPayment, {
+        where: { order: { id } },
+        relations: [],
+      });
+
+      if (!order || !client || !items || !payment) {
+        throw new NotFoundException('Order not found');
+      }
+
+      return {
+        ...order,
+        client,
+        items,
+        payment,
+      };
+    });
+    return response;
+  }
 
   async create(createOrderDto: CreateOrderDto) {
     try {

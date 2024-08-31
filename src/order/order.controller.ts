@@ -1,4 +1,11 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 
@@ -9,5 +16,10 @@ export class OrderController {
   @Post('checkout')
   async create(@Body() createOrderDto: CreateOrderDto) {
     return this.orderService.create(createOrderDto);
+  }
+
+  @Get(':id')
+  async findAll(@Param('id', new ParseIntPipe()) id: number) {
+    return this.orderService.findById(id);
   }
 }
