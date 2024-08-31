@@ -3,7 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,7 +28,12 @@ export class Author {
   })
   description: string;
 
-  @OneToMany(() => Book, (book) => book.author)
+  @Column({
+    default: true,
+  })
+  active: boolean;
+
+  @ManyToMany(() => Book, (book) => book.author)
   books: Book[];
 
   @CreateDateColumn()
