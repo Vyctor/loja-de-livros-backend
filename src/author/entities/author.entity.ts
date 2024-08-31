@@ -33,9 +33,6 @@ export class Author {
   })
   active: boolean;
 
-  @ManyToMany(() => Book, (book) => book.author)
-  books: Book[];
-
   @CreateDateColumn()
   createdAt: Date;
 

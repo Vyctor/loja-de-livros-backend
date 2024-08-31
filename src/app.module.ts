@@ -9,6 +9,7 @@ import { CategoryModule } from './category/category.module';
 import { BookModule } from './book/book.module';
 import { AddressModule } from './address/address.module';
 import { InitialSeedService } from './initial-seed.service';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { InitialSeedService } from './initial-seed.service';
     CategoryModule,
     BookModule,
     AddressModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [InitialSeedService],
