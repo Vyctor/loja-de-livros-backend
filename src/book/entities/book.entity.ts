@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -42,12 +44,19 @@ export class Book {
   @Column()
   releaseDate: Date;
 
+  @Column({
+    default: true,
+  })
+  active: boolean;
+
   @ManyToOne(() => Category)
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @ManyToOne(() => Author)
-  @JoinColumn({ name: 'author_id' })
+  @ManyToMany(() => Author)
+  @JoinTable({
+    name: 'book_authors',
+  })
   author: Author;
 
   @CreateDateColumn()
