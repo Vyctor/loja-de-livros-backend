@@ -12,6 +12,7 @@ async function bootstrap() {
   const seed = app.get(InitialSeedService);
 
   await seed.seedCountriesAndStates();
+  await seed.seedAuthors();
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
