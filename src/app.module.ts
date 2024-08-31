@@ -8,6 +8,7 @@ import { AuthorModule } from './author/author.module';
 import { CategoryModule } from './category/category.module';
 import { BookModule } from './book/book.module';
 import { AddressModule } from './address/address.module';
+import { InitialSeedService } from './initial-seed.service';
 
 @Module({
   imports: [
@@ -42,6 +43,6 @@ import { AddressModule } from './address/address.module';
     AddressModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [InitialSeedService],
 })
 export class AppModule {}
