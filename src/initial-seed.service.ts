@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { Country } from './address/entities/country.entity';
 import { State } from './address/entities/state.entity';
 import { Author } from './author/entities/author.entity';
+import { Category } from './category/entities/category.entity';
 
 @Injectable()
 export class InitialSeedService {
@@ -154,6 +155,47 @@ export class InitialSeedService {
           await manager.save(
             manager.create(Author, {
               ...author,
+            }),
+          );
+        }
+      }
+    });
+  }
+
+  async seedCategories(): Promise<void> {
+    const categoriesPayloadd = [
+      { name: 'Infanto Juvenil' },
+      { name: 'Crônicas' },
+      { name: 'Romance' },
+      { name: 'Ficção Científica' },
+      { name: 'Fantasia' },
+      { name: 'Terror' },
+      { name: 'Mistério' },
+      { name: 'Aventura' },
+      { name: 'Poesia' },
+      { name: 'Biografia' },
+      { name: 'História' },
+      { name: 'Filosofia' },
+      { name: 'Religião' },
+      { name: 'Ciências Sociais' },
+      { name: 'Arte' },
+      { name: 'Gastronomia' },
+      { name: 'Viagens' },
+      { name: 'Autoajuda' },
+      { name: 'Humor' },
+      { name: 'Suspense' },
+    ];
+
+    await this.dataSource.transaction(async (manager) => {
+      for (const category of categoriesPayloadd) {
+        const exists = await manager.findOne(Category, {
+          where: { name: category.name },
+        });
+
+        if (!exists?.id) {
+          await manager.save(
+            manager.create(Category, {
+              ...category,
             }),
           );
         }

@@ -13,6 +13,7 @@ async function bootstrap() {
 
   await seed.seedCountriesAndStates();
   await seed.seedAuthors();
+  await seed.seedCategories();
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
