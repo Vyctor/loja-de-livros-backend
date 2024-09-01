@@ -26,6 +26,7 @@ O objetivo consiste em criar uma loja de livros online similar a Casa do Código
 - [x] Listagem de estados por país
 - [x] Checkout de compra
 - [x] Integração com o REDIS para mensageria
+- [x] Integração com event emitter
 - [ ] Envio de e-mail para o usuários de acordo com o status da compra
 - [ ] Criação de domain events para disparar eventos de acordo com o status da compra
 - [ ] Migração da criação de pedidos para o NestCQRS
