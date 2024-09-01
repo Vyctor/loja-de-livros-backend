@@ -29,6 +29,16 @@ export class OrderCreateHandler {
     const createOrderDto = job.data;
     this.logger.log(`Processing a new order`);
 
+    const orderValueSum = createOrderDto.items.reduce((acc, next) => {
+      const total = next.price * next.quantity;
+      return acc + total;
+    }, 0);
+
+    if (createOrderDto.total !== orderValueSum) {
+      this.logger.error("Total Value doesn't match with items value sum");
+      throw new InternalServerErrorException('Total value is invalid');
+    }
+
     try {
       await this.datasource.transaction(async (db) => {
         const clientFromOrderPayload = createOrderDto.client;
@@ -38,36 +48,54 @@ export class OrderCreateHandler {
         const order = db.create(Order, {
           total: createOrderDto.total,
           status: OrderStatus.CREATED,
-          client: db.create(OrderClient, {
-            email: clientFromOrderPayload.email,
-            name: clientFromOrderPayload.name,
-            surname: clientFromOrderPayload.surname,
-            document: clientFromOrderPayload.document,
-            country: { id: clientFromOrderPayload.country_id },
-            state: { id: clientFromOrderPayload.state_id },
-            streetName: clientFromOrderPayload.street_name,
-            streetNumber: clientFromOrderPayload.street_number,
-            complement: clientFromOrderPayload.complement,
-            zipCode: clientFromOrderPayload.zip_code,
-            phone: clientFromOrderPayload.phone,
-          }),
-          orderItems: booksFromOrderPayload.map((book) => {
-            return db.create(OrderItem, {
-              book: { id: book.book_id },
-              price: book.price,
-              quantity: book.quantity,
-            });
-          }),
-          payment: db.create(OrderPayment, {
-            type: OrderPaymentType[paymentFromOrderPayload.type],
-            value: createOrderDto.total,
-            cardBrand: CardBrand[paymentFromOrderPayload.card_brand],
-            cardNumber: paymentFromOrderPayload.card_number,
-            cardHolder: paymentFromOrderPayload.card_holder,
-          }),
+        });
+        const orderCreated = await db.save(Order, order);
+
+        const orderClient = db.create(OrderClient, {
+          order: {
+            id: order.id,
+          },
+          email: clientFromOrderPayload.email,
+          name: clientFromOrderPayload.name,
+          surname: clientFromOrderPayload.surname,
+          document: clientFromOrderPayload.document,
+          country: { id: clientFromOrderPayload.country_id },
+          state: { id: clientFromOrderPayload.state_id },
+          streetName: clientFromOrderPayload.street_name,
+          streetNumber: clientFromOrderPayload.street_number,
+          complement: clientFromOrderPayload.complement,
+          zipCode: clientFromOrderPayload.zip_code,
+          phone: clientFromOrderPayload.phone,
         });
 
-        const orderCreated = await db.save(Order, order);
+        const orderPayments = db.create(OrderPayment, {
+          order: {
+            id: order.id,
+          },
+          type: OrderPaymentType[paymentFromOrderPayload.type],
+          value: createOrderDto.total,
+          cardBrand: CardBrand[paymentFromOrderPayload.card_brand],
+          cardNumber: paymentFromOrderPayload.card_number,
+          cardHolder: paymentFromOrderPayload.card_holder,
+        });
+
+        const orderItems = booksFromOrderPayload.map((book) => {
+          return db.create(OrderItem, {
+            order: {
+              id: order.id,
+            },
+            book: { id: book.book_id },
+            price: book.price,
+            quantity: book.quantity,
+          });
+        });
+
+        await Promise.all([
+          await db.save(OrderClient, orderClient),
+          await db.save(OrderPayment, orderPayments),
+          await db.save(OrderItem, orderItems),
+        ]);
+
         this.logger.log(`Order ${orderCreated.id} created`);
 
         this.eventEmitter.emit('order.created', {
