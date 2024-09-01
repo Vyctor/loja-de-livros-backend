@@ -8,10 +8,12 @@ import { OrderClient } from './entities/order-client.entity';
 import { OrderPayment } from './entities/order-payment.entity';
 import { CqrsModule } from '@nestjs/cqrs';
 import { BullModule } from '@nestjs/bull';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     CqrsModule,
+    EventEmitterModule.forRoot(),
     BullModule.registerQueue(
       { name: 'order-create-queue' },
       { name: 'order-update-queue' },

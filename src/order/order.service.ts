@@ -15,12 +15,14 @@ import {
 } from './entities/order-payment.entity';
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Processor('order-create-queue')
 export class OrderService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findById(id: number) {
@@ -109,10 +111,18 @@ export class OrderService {
           }),
         });
 
-        await db.insert(Order, order);
+        const orderCreated = await db.save(Order, order);
+        this.eventEmitter.emit('order.created', {
+          order_id: orderCreated.id,
+        });
       });
     } catch (error) {
       throw new InternalServerErrorException('Error on create order');
     }
+  }
+
+  @OnEvent('order.created', { async: true })
+  handleOrderCreatedEvent(payload: any) {
+    console.info('Order Created Event: ', payload);
   }
 }
