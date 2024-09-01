@@ -16,6 +16,7 @@ export class CreateOrderDto {
   items: Array<{
     quantity: number;
     book_id: number;
+    price: number;
   }>;
   payment: {
     type: string;

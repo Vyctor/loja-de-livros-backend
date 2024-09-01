@@ -10,7 +10,7 @@ import { BookModule } from './book/book.module';
 import { AddressModule } from './address/address.module';
 import { InitialSeedService } from './initial-seed.service';
 import { OrderModule } from './order/order.module';
-import { BullModule } from '@nestjs/bullmq';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [

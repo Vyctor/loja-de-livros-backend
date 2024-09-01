@@ -1,13 +1,10 @@
 import {
-  ForbiddenException,
-  Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, In } from 'typeorm';
-import { Book } from 'src/book/entities/book.entity';
+import { DataSource } from 'typeorm';
 import { Order, OrderStatus } from './entities/order.entity';
 import { OrderClient } from './entities/order-client.entity';
 import { OrderItem } from './entities/order-item.entity';
@@ -16,9 +13,10 @@ import {
   OrderPayment,
   OrderPaymentType,
 } from './entities/order-payment.entity';
-import { State } from 'src/address/entities/state.entity';
+import { Process, Processor } from '@nestjs/bull';
+import { Job } from 'bull';
 
-@Injectable()
+@Processor('order-create-queue')
 export class OrderService {
   constructor(
     @InjectDataSource()
@@ -26,12 +24,12 @@ export class OrderService {
   ) {}
 
   async findById(id: number) {
-    const response = await this.dataSource.transaction(async (manager) => {
-      const order = await manager.findOne(Order, {
+    const response = await this.dataSource.transaction(async (db) => {
+      const order = await db.findOne(Order, {
         where: { id },
       });
 
-      const client = await manager.findOne(OrderClient, {
+      const client = await db.findOne(OrderClient, {
         where: { order: { id } },
         relations: ['country', 'state'],
         select: {
@@ -45,12 +43,12 @@ export class OrderService {
           },
         },
       });
-      const items = await manager.find(OrderItem, {
+      const items = await db.find(OrderItem, {
         where: { order: { id } },
         relations: ['book'],
       });
 
-      const payment = await manager.findOne(OrderPayment, {
+      const payment = await db.findOne(OrderPayment, {
         where: { order: { id } },
         relations: [],
       });
@@ -69,63 +67,26 @@ export class OrderService {
     return response;
   }
 
-  async create(createOrderDto: CreateOrderDto) {
+  @Process('create-order')
+  async create(job: Job<CreateOrderDto>) {
+    const createOrderDto = job.data;
+
     try {
-      await this.dataSource.transaction(async (manager) => {
-        // Validate state and country
-        const state = await manager.findOne(State, {
-          where: { id: createOrderDto.client.state_id },
-        });
-
-        if (!state) {
-          console.log('State not found');
-          throw new ForbiddenException('State not found');
-        }
-
-        const country = await manager.findOne(State, {
-          where: { id: createOrderDto.client.country_id },
-        });
-
-        if (!country) {
-          console.log('Country not found');
-          throw new ForbiddenException('Country not found');
-        }
-
-        // Validate Price
-        const booksFromOrderPayload = createOrderDto.items;
+      await this.dataSource.transaction(async (db) => {
         const clientFromOrderPayload = createOrderDto.client;
+        const booksFromOrderPayload = createOrderDto.items;
         const paymentFromOrderPayload = createOrderDto.payment;
 
-        const booksFromRepo = await manager.find(Book, {
-          where: {
-            id: In(booksFromOrderPayload.map((book) => book.book_id)),
-          },
-        });
-        const repositoryTotalPrice = booksFromRepo
-          .map((item) => {
-            const book = booksFromOrderPayload.find(
-              (book) => book.book_id === item.id,
-            );
-            return item.price * book.quantity;
-          })
-          .reduce((acc, curr) => acc + curr, 0);
-
-        if (repositoryTotalPrice !== createOrderDto.total) {
-          console.log('Total price is invalid');
-
-          throw new ForbiddenException('Invalid total price');
-        }
-
         // Create order
-        const order = await manager.save(
-          manager.create(Order, {
+        const order = await db.save(
+          db.create(Order, {
             total: createOrderDto.total,
             status: OrderStatus.CREATED,
           }),
         );
         // Create client
-        await manager.save(
-          manager.create(OrderClient, {
+        await db.save(
+          db.create(OrderClient, {
             email: clientFromOrderPayload.email,
             name: clientFromOrderPayload.name,
             surname: clientFromOrderPayload.surname,
@@ -141,21 +102,19 @@ export class OrderService {
           }),
         );
         // Create items
-        await manager.save(
-          booksFromRepo.map((book) => {
-            return manager.create(OrderItem, {
-              book: { id: book.id },
+        await db.save(
+          booksFromOrderPayload.map((book) => {
+            return db.create(OrderItem, {
+              book: { id: book.book_id },
               order: { id: order.id },
               price: book.price,
-              quantity: booksFromOrderPayload.find(
-                (item) => item.book_id === book.id,
-              ).quantity,
+              quantity: book.quantity,
             });
           }),
         );
         // Create payment
-        await manager.save(
-          manager.create(OrderPayment, {
+        await db.save(
+          db.create(OrderPayment, {
             type: OrderPaymentType[paymentFromOrderPayload.type],
             value: createOrderDto.total,
             cardBrand: CardBrand[paymentFromOrderPayload.card_brand],
