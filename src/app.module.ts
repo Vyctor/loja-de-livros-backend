@@ -10,6 +10,7 @@ import { BookModule } from './book/book.module';
 import { AddressModule } from './address/address.module';
 import { InitialSeedService } from './initial-seed.service';
 import { OrderModule } from './order/order.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -27,6 +28,25 @@ import { OrderModule } from './order/order.module';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
         logging: true,
+      }),
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [EnvironmentService],
+      useFactory: (environmentService: EnvironmentService) => ({
+        connection: {
+          host: environmentService.REDIS_HOST,
+          port: environmentService.REDIS_PORT,
+        },
+        defaultJobOptions: {
+          removeOnComplete: 100,
+          removeOnFail: 10000,
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 5000,
+          },
+        },
       }),
     }),
     CacheModule.registerAsync({
