@@ -25,11 +25,13 @@ Content-Type: application/json
   "items": [
     {
       "quantity": 2,
-      "book_id": 1
+      "book_id": 1,
+      "price": 20.00
     },
     {
       "quantity": 2,
-      "book_id": 2
+      "book_id": 2,
+      "price": 20.00
     }
   ],
   "payment": {
