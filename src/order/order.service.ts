@@ -77,21 +77,14 @@ export class OrderService {
         const booksFromOrderPayload = createOrderDto.items;
         const paymentFromOrderPayload = createOrderDto.payment;
 
-        // Create order
-        const order = await db.save(
-          db.create(Order, {
-            total: createOrderDto.total,
-            status: OrderStatus.CREATED,
-          }),
-        );
-        // Create client
-        await db.save(
-          db.create(OrderClient, {
+        const order = db.create(Order, {
+          total: createOrderDto.total,
+          status: OrderStatus.CREATED,
+          client: db.create(OrderClient, {
             email: clientFromOrderPayload.email,
             name: clientFromOrderPayload.name,
             surname: clientFromOrderPayload.surname,
             document: clientFromOrderPayload.document,
-            order: { id: order.id },
             country: { id: clientFromOrderPayload.country_id },
             state: { id: clientFromOrderPayload.state_id },
             streetName: clientFromOrderPayload.street_name,
@@ -100,31 +93,23 @@ export class OrderService {
             zipCode: clientFromOrderPayload.zip_code,
             phone: clientFromOrderPayload.phone,
           }),
-        );
-        // Create items
-        await db.save(
-          booksFromOrderPayload.map((book) => {
+          orderItems: booksFromOrderPayload.map((book) => {
             return db.create(OrderItem, {
               book: { id: book.book_id },
-              order: { id: order.id },
               price: book.price,
               quantity: book.quantity,
             });
           }),
-        );
-        // Create payment
-        await db.save(
-          db.create(OrderPayment, {
+          payment: db.create(OrderPayment, {
             type: OrderPaymentType[paymentFromOrderPayload.type],
             value: createOrderDto.total,
             cardBrand: CardBrand[paymentFromOrderPayload.card_brand],
             cardNumber: paymentFromOrderPayload.card_number,
             cardHolder: paymentFromOrderPayload.card_holder,
-            order: {
-              id: order.id,
-            },
           }),
-        );
+        });
+
+        await db.insert(Order, order);
       });
     } catch (error) {
       throw new InternalServerErrorException('Error on create order');

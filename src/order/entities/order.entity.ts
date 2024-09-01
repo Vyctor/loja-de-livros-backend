@@ -2,9 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { OrderClient } from './order-client.entity';
+import { OrderItem } from './order-item.entity';
+import { OrderPayment } from './order-payment.entity';
 
 export enum OrderStatus {
   'CREATED',
@@ -30,6 +36,15 @@ export class Order {
     enum: OrderStatus,
   })
   status: OrderStatus;
+
+  @OneToOne(() => OrderClient, (orderClient) => orderClient.id)
+  client: OrderClient;
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.id)
+  orderItems: OrderItem[];
+
+  @OneToOne(() => OrderPayment, (orderPayment) => orderPayment.id)
+  payment: OrderPayment;
 
   @CreateDateColumn()
   createdAt: Date;
