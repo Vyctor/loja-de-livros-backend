@@ -1,4 +1,4 @@
-export class CreateOrderDto {
+export class OrderCreateDto {
   total: number;
   client: {
     email: string;

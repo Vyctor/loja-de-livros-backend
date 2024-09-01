@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { EventBus } from '@nestjs/cqrs';
 import { BaseEntity } from '../entities/base.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class EntityEventsDispatcher {
-  constructor(private readonly eventBus: EventBus) {}
+  constructor(private readonly eventEmitter: EventEmitter2) {}
+
   async dispatch(entity: BaseEntity): Promise<void> {
-    const processingEvents = entity
+    entity
       .getEvents()
-      .map((event) => this.eventBus.publish(event));
-    await Promise.all(processingEvents);
+      .map((event) => this.eventEmitter.emit(event.eventName, event.payload));
     entity.clearEvents();
   }
 }

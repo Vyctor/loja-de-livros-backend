@@ -27,7 +27,7 @@ import { BullModule } from '@nestjs/bull';
         password: environmentService.DB_PASS,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
-        logging: true,
+        logging: false,
       }),
     }),
     BullModule.forRootAsync({

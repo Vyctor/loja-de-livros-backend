@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
@@ -9,18 +8,19 @@ import { OrderPayment } from './entities/order-payment.entity';
 import { CqrsModule } from '@nestjs/cqrs';
 import { BullModule } from '@nestjs/bull';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { JobHandlers } from './jobs';
+import { EventsHandler } from './events';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [
     CqrsModule,
     EventEmitterModule.forRoot(),
-    BullModule.registerQueue(
-      { name: 'order-create-queue' },
-      { name: 'order-update-queue' },
-    ),
+    BullModule.registerQueue({ name: 'orders' }),
     TypeOrmModule.forFeature([Order, OrderItem, OrderClient, OrderPayment]),
+    CommonModule,
   ],
   controllers: [OrderController],
-  providers: [OrderService],
+  providers: [...JobHandlers, ...EventsHandler],
 })
 export class OrderModule {}

@@ -1,9 +1,14 @@
 import { AfterLoad } from 'typeorm';
 
-export class BaseEntity {
-  private events: unknown[] = [];
+type BaseEntityEvent = {
+  eventName: string;
+  payload: unknown;
+};
 
-  addEvent(event: unknown): void {
+export class BaseEntity {
+  private events = new Array<BaseEntityEvent>();
+
+  addEvent(event: BaseEntityEvent): void {
     this.events.push(event);
   }
 
@@ -11,7 +16,7 @@ export class BaseEntity {
     this.events = [];
   }
 
-  getEvents(): unknown[] {
+  getEvents(): Array<BaseEntityEvent> {
     return this.events;
   }
 

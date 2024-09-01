@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +10,7 @@ import {
 import { OrderClient } from './order-client.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderPayment } from './order-payment.entity';
+import { BaseEntity } from 'src/common/entities/base.entity';
 
 export enum OrderStatus {
   'CREATED',
@@ -25,7 +25,9 @@ export enum OrderStatus {
 }
 
 @Entity()
-export class Order {
+export class Order extends BaseEntity {
+  private _status: OrderStatus;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -35,7 +37,21 @@ export class Order {
   @Column({
     enum: OrderStatus,
   })
-  status: OrderStatus;
+  get status(): OrderStatus {
+    return this._status;
+  }
+  set status(value: OrderStatus) {
+    if (value && value > this._status) {
+      this.addEvent({
+        eventName: 'order.status-updated',
+        payload: {
+          orderId: this.id,
+          status: value,
+        },
+      });
+    }
+    this._status = value;
+  }
 
   @OneToOne(() => OrderClient, (orderClient) => orderClient.id)
   client: OrderClient;
