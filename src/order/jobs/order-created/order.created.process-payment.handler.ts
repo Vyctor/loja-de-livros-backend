@@ -18,7 +18,7 @@ export class OrderCreatedProcessPaymentHandler {
     private readonly environment: EnvironmentService,
   ) {}
 
-  @Process('ç')
+  @Process('created')
   async execute(job: Job<OrderCreatedDto>): Promise<void> {
     const payload = job.data;
     this.logger.log(`Processing payment for order ${payload.id}`);
