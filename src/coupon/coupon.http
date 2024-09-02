@@ -1,0 +1,21 @@
+### Find all coupons
+GET http://localhost:3000/coupon
+Content-Type: application/json
+
+### Find coupon by id
+GET http://localhost:3000/coupon/1
+Content-Type: application/json 
+
+### Create a new coupon
+POST http://localhost:3000/coupon
+Content-Type: application/json
+
+{
+    "code": "NEWCOUPON30",
+    "discountPercentage": 10,
+    "expireDate": "2024-01-31T00:00:00.000Z"
+}
+
+### Delete a coupon
+DELETE http://localhost:3000/coupon/5
+Content-Type: application/json

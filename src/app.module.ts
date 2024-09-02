@@ -11,6 +11,7 @@ import { AddressModule } from './address/address.module';
 import { InitialSeedService } from './initial-seed.service';
 import { OrderModule } from './order/order.module';
 import { BullModule } from '@nestjs/bull';
+import { CouponModule } from './coupon/coupon.module';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { BullModule } from '@nestjs/bull';
         defaultJobOptions: {
           removeOnComplete: 100,
           removeOnFail: 10000,
-          attempts: 3,
+          attempts: 10,
           backoff: {
             type: 'exponential',
             delay: 30000,
@@ -63,6 +64,7 @@ import { BullModule } from '@nestjs/bull';
     BookModule,
     AddressModule,
     OrderModule,
+    CouponModule,
   ],
   controllers: [],
   providers: [InitialSeedService],
