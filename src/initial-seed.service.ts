@@ -6,6 +6,7 @@ import { State } from './address/entities/state.entity';
 import { Author } from './author/entities/author.entity';
 import { Category } from './category/entities/category.entity';
 import { Book } from './book/entities/book.entity';
+import { Coupon } from './coupon/entities/coupon.entity';
 
 @Injectable()
 export class InitialSeedService {
@@ -240,6 +241,53 @@ export class InitialSeedService {
           await manager.save(
             manager.create(Book, {
               ...book,
+            }),
+          );
+        }
+      }
+    });
+  }
+
+  async seedCoupons(): Promise<void> {
+    const couponsPayload = [
+      {
+        code: 'BLACKFRIDAY2024',
+        discountPercentage: 30,
+        expireDate: '2024-11-30',
+      },
+      {
+        code: 'CYBERMONDAY2024',
+        discountPercentage: 25,
+        expireDate: '2024-12-03',
+      },
+      {
+        code: 'BLACKFRIDAY2024',
+        discountPercentage: 20,
+        expireDate: '2024-11-30',
+      },
+      {
+        code: 'CYBERMONDAY2024',
+        discountPercentage: 15,
+        expireDate: '2024-12-03',
+      },
+      {
+        code: 'CYBERMONDAY2024',
+        discountPercentage: 15,
+        expireDate: '2024-12-03',
+        deletedAt: new Date(),
+      },
+    ];
+
+    await this.dataSource.transaction(async (manager) => {
+      for (const coupon of couponsPayload) {
+        const exists = await manager.findOne(Coupon, {
+          where: { code: coupon.code },
+        });
+
+        if (!exists?.id) {
+          await manager.save(
+            manager.create(Coupon, {
+              ...coupon,
             }),
           );
         }

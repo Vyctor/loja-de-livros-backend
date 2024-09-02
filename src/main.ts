@@ -14,6 +14,7 @@ async function bootstrap() {
   await seed.seedAuthors();
   await seed.seedCategories();
   await seed.seedBooks();
+  await seed.seedCoupons();
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
