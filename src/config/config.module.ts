@@ -20,6 +20,7 @@ import { EnvironmentService } from './environment.service';
         DB_NAME: Joi.string().required(),
         DB_USER: Joi.string().required(),
         DB_PASS: Joi.string().required(),
+        PAYMENT_GATEWAY_URL: Joi.string().required(),
       }),
     }),
   ],

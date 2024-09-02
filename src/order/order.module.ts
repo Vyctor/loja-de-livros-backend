@@ -11,10 +11,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JobHandlers } from './jobs';
 import { EventsHandler } from './events';
 import { CommonModule } from 'src/common/common.module';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigModule } from 'src/config/config.module';
 
 @Module({
   imports: [
     CqrsModule,
+    HttpModule,
+    ConfigModule,
     EventEmitterModule.forRoot(),
     BullModule.registerQueue({ name: 'orders' }),
     TypeOrmModule.forFeature([Order, OrderItem, OrderClient, OrderPayment]),

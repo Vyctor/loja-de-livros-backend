@@ -5,13 +5,29 @@ import { Queue } from 'bull';
 
 @Controller('order')
 export class OrderController {
-  constructor(@InjectQueue('orders') private orderCreateQueue: Queue) {}
+  constructor(@InjectQueue('orders') private orderQueue: Queue) {}
 
   @Post('checkout')
   async create(@Body() orderCreateDto: OrderCreateDto) {
-    await this.orderCreateQueue.add('create', orderCreateDto);
+    await this.orderQueue.add('create', orderCreateDto);
     return {
       message: 'Processing order',
+    };
+  }
+
+  @Post('webhook/payment-update')
+  async webhook(
+    @Body()
+    payload: {
+      payment_id: number;
+      payment_foreign_transaction_id: string;
+      status: string;
+    },
+  ) {
+    console.log('Received payment webhook', payload);
+    await this.orderQueue.add('update-payment-status', payload);
+    return {
+      message: 'Payment webhook received',
     };
   }
 }

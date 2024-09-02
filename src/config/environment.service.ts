@@ -40,4 +40,8 @@ export class EnvironmentService {
   get REDIS_PORT(): number {
     return this.config.get<number>('REDIS_PORT');
   }
+
+  get PAYMENT_GATEWAY_URL(): string {
+    return this.config.get<string>('PAYMENT_GATEWAY_URL');
+  }
 }
