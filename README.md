@@ -27,13 +27,11 @@ O objetivo consiste em criar uma loja de livros online similar a Casa do Código
 - [x] Checkout de compra
 - [x] Integração com o REDIS para mensageria
 - [x] Integração com event emitter
-- [ ] Envio de e-mail para o usuários de acordo com o status da compra
-- [ ] Criação de domain events para disparar eventos de acordo com o status da compra
-- [ ] Migração da criação de pedidos para o NestCQRS
-- [ ] Cadastro de Usuário
+- [x] Criação de um serviço fake de pagamentos
+- [x] Integração com o serviço de pagamentos
+- [x] Criação de domain events para disparar eventos de acordo com o status da compra
+- [ ] Envio de e-mail fake para o usuários de acordo com o status da compra
 - [ ] Separação de entidades de domínio e entidades de banco de dados
 - [ ] Documentação com Swagger
 - [ ] Cache de rotas
 - [ ] Testes automatizados
-- [ ] Criação de um serviço fake de pagamentos
-- [ ] Integração com o serviço de pagamentos
