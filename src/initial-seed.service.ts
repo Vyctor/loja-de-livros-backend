@@ -7,6 +7,7 @@ import { Author } from './author/entities/author.entity';
 import { Category } from './category/entities/category.entity';
 import { Book } from './book/entities/book.entity';
 import { Coupon } from './coupon/entities/coupon.entity';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class InitialSeedService {
@@ -251,29 +252,29 @@ export class InitialSeedService {
   async seedCoupons(): Promise<void> {
     const couponsPayload = [
       {
-        code: 'BLACKFRIDAY2024',
+        code: 'BLACKFRIDAY30',
         discountPercentage: 30,
-        expireDate: '2024-11-30',
+        expireDate: dayjs().add(1, 'month').toISOString(),
       },
       {
-        code: 'CYBERMONDAY2024',
+        code: 'CYBERMONDAY25',
         discountPercentage: 25,
-        expireDate: '2024-12-03',
+        expireDate: dayjs().add(1, 'month').toISOString(),
       },
       {
-        code: 'BLACKFRIDAY2024',
+        code: 'BLACKFRIDAY20',
         discountPercentage: 20,
-        expireDate: '2024-11-30',
+        expireDate: dayjs().add(1, 'month').toISOString(),
       },
       {
-        code: 'CYBERMONDAY2024',
+        code: 'CYBERMONDAY15',
         discountPercentage: 15,
-        expireDate: '2024-12-03',
+        expireDate: dayjs().add(1, 'month').toISOString(),
       },
       {
-        code: 'CYBERMONDAY2024',
+        code: 'EXPIRED15',
         discountPercentage: 15,
-        expireDate: '2024-12-03',
+        expireDate: dayjs().add(1, 'month').toISOString(),
         deletedAt: new Date(),
       },
     ];
@@ -282,9 +283,11 @@ export class InitialSeedService {
       for (const coupon of couponsPayload) {
         const exists = await manager.findOne(Coupon, {
           where: { code: coupon.code },
+          withDeleted: true,
         });
 
-        if (!exists?.id) {
+        if (!exists && !exists?.id) {
+          console.log("Coupon doesn't exist, creating...", exists);
           await manager.save(
             manager.create(Coupon, {
               ...coupon,
