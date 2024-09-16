@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -59,7 +60,7 @@ export class Order extends BaseEntity {
     }
     this._status = value;
   }
-
+  O;
   @OneToOne(() => OrderClient, (orderClient) => orderClient.id)
   client: OrderClient;
 

@@ -13,6 +13,7 @@ import { EventsHandler } from './events';
 import { CommonModule } from 'src/common/common.module';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from 'src/config/config.module';
+import { OrderService } from './order.service';
 
 @Module({
   imports: [
@@ -25,6 +26,6 @@ import { ConfigModule } from 'src/config/config.module';
     CommonModule,
   ],
   controllers: [OrderController],
-  providers: [...JobHandlers, ...EventsHandler],
+  providers: [...JobHandlers, ...EventsHandler, OrderService],
 })
 export class OrderModule {}

@@ -1,11 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { OrderCreateDto } from './jobs/create-order/order.create.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { OrderService } from './order.service';
 
 @Controller('order')
 export class OrderController {
-  constructor(@InjectQueue('orders') private orderQueue: Queue) {}
+  constructor(
+    @InjectQueue('orders') private orderQueue: Queue,
+    private readonly orderService: OrderService,
+  ) {}
 
   @Post('checkout')
   async create(@Body() orderCreateDto: OrderCreateDto) {
@@ -29,5 +33,10 @@ export class OrderController {
     return {
       message: 'Payment webhook received',
     };
+  }
+
+  @Get(':id')
+  async getOrder(@Param('id') id: number) {
+    return await this.orderService.getOrder(id);
   }
 }

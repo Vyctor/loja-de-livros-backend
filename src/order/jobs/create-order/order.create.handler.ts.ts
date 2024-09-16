@@ -36,6 +36,7 @@ export class OrderCreateHandler {
         const booksFromOrderPayload = createOrderDto.items;
         const paymentFromOrderPayload = createOrderDto.payment;
         const couponCode = createOrderDto.couponCode;
+        let couponId = null;
 
         if (couponCode) {
           const coupon = await db.findOne(Coupon, {
@@ -49,6 +50,7 @@ export class OrderCreateHandler {
           }
 
           if (coupon?.isValid()) {
+            couponId = coupon.id;
             const total = createOrderDto.total + createOrderDto.discount;
             const discount = total * (coupon.discountPercentage / 100);
             if (discount !== createOrderDto.discount) {
@@ -74,6 +76,7 @@ export class OrderCreateHandler {
           total: createOrderDto.total,
           status: OrderStatus.CREATED,
           discount: createOrderDto.discount,
+          coupon: couponId,
         });
 
         const orderCreated = await db.save(Order, order);
