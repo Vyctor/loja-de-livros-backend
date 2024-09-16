@@ -13,6 +13,7 @@ import {
 } from 'src/order/entities/order-payment.entity';
 import { OrderCreateDto } from './order.create.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Coupon } from '../../../coupon/entities/coupon.entity';
 
 @Processor('orders')
 export class OrderCreateHandler {
@@ -26,29 +27,55 @@ export class OrderCreateHandler {
 
   @Process('create')
   async execute(job: Job<OrderCreateDto>): Promise<void> {
-    const createOrderDto = job.data;
-    this.logger.log(`Processing a new order`);
-
-    const orderValueSum = createOrderDto.items.reduce((acc, next) => {
-      const total = next.price * next.quantity;
-      return acc + total;
-    }, 0);
-
-    if (createOrderDto.total !== orderValueSum) {
-      this.logger.error("Total Value doesn't match with items value sum");
-      throw new InternalServerErrorException('Total value is invalid');
-    }
-
     try {
+      const createOrderDto = job.data;
+      this.logger.log(`Processing a new order`);
+
       await this.datasource.transaction(async (db) => {
         const clientFromOrderPayload = createOrderDto.client;
         const booksFromOrderPayload = createOrderDto.items;
         const paymentFromOrderPayload = createOrderDto.payment;
+        const couponCode = createOrderDto.couponCode;
+
+        if (couponCode) {
+          const coupon = await db.findOne(Coupon, {
+            where: {
+              code: couponCode,
+            },
+          });
+
+          if (!coupon) {
+            this.logger.error(`Coupon ${couponCode} not found`);
+          }
+
+          if (coupon?.isValid()) {
+            const total = createOrderDto.total + createOrderDto.discount;
+            const discount = total * (coupon.discountPercentage / 100);
+            if (discount !== createOrderDto.discount) {
+              this.logger.error(`Discount value is invalid`);
+              throw new InternalServerErrorException(
+                'Discount value is invalid',
+              );
+            }
+          }
+        }
+
+        const orderValueSum = createOrderDto.items.reduce((acc, next) => {
+          const total = next.price * next.quantity;
+          return acc + total;
+        }, 0);
+
+        if (createOrderDto.total + createOrderDto.discount !== orderValueSum) {
+          this.logger.error("Total Value doesn't match with items value sum");
+          throw new InternalServerErrorException('Total value is invalid');
+        }
 
         const order = db.create(Order, {
           total: createOrderDto.total,
           status: OrderStatus.CREATED,
+          discount: createOrderDto.discount,
         });
+
         const orderCreated = await db.save(Order, order);
 
         const orderClient = db.create(OrderClient, {

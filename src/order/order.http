@@ -7,8 +7,10 @@ POST http://localhost:3000/order/checkout
 Content-Type: application/json
 
 {
-  "total": 80.00,
+  "total": 72,
+  "discount": 8,
   "status": "PENDING",
+  "couponCode": "NEWCOUPON30",
   "client": {
     "email": "john.doe@example.com",
     "name": "John",

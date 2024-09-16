@@ -13,7 +13,7 @@ Content-Type: application/json
 {
     "code": "NEWCOUPON30",
     "discountPercentage": 10,
-    "expireDate": "2024-01-31T00:00:00.000Z"
+    "expireDate": "2024-09-31T00:00:00.000Z"
 }
 
 ### Delete a coupon

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import { OrderClient } from './order-client.entity';
 import { OrderItem } from './order-item.entity';
 import { OrderPayment } from './order-payment.entity';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { Coupon } from '../../coupon/entities/coupon.entity';
 
 export enum OrderStatus {
   'CREATED',
@@ -35,6 +37,11 @@ export class Order extends BaseEntity {
   total: number;
 
   @Column({
+    default: 0,
+  })
+  discount: number;
+
+  @Column({
     enum: OrderStatus,
   })
   get status(): OrderStatus {
@@ -55,6 +62,9 @@ export class Order extends BaseEntity {
 
   @OneToOne(() => OrderClient, (orderClient) => orderClient.id)
   client: OrderClient;
+
+  @ManyToOne(() => Coupon, (coupon) => coupon.id)
+  coupon: Coupon;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.id)
   orderItems: OrderItem[];

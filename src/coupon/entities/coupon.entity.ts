@@ -25,4 +25,8 @@ export class Coupon {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  isValid(): boolean {
+    return this.expireDate > new Date();
+  }
 }

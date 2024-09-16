@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsEnum,
   IsNumber,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   Min,
@@ -11,7 +12,7 @@ import {
 import {
   CardBrand,
   OrderPaymentType,
-} from '../../../order/entities/order-payment.entity';
+} from '../../entities/order-payment.entity';
 import { Type } from 'class-transformer';
 
 export class OrderPaymentDto {
@@ -28,6 +29,7 @@ export class OrderPaymentDto {
   @IsString()
   card_cvv: string;
 }
+
 export class OrderItemDto {
   @IsNumber()
   @Min(1)
@@ -72,6 +74,14 @@ export class OrderCreateDto {
   })
   @Min(1)
   total: number;
+
+  @IsNumber()
+  @IsOptional()
+  discount?: number;
+
+  @IsString()
+  @IsOptional()
+  couponCode?: string;
 
   @ValidateNested()
   @Type(() => OrderClientDto)
