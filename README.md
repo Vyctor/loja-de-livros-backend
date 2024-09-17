@@ -28,7 +28,7 @@ O objetivo consiste em criar uma loja de livros online similar a Casa do Código
 - [x] Integração com o REDIS para mensageria
 - [x] Integração com event emitter
 - [x] Criação de um serviço fake de pagamentos
-- [x] Integração com o serviço de pagamentos
+- [x] Integração com o serviço de pagament∑os
 - [x] Criação de domain events para disparar eventos de acordo com o status da compra
 - [x] Implementar cupom de desconto
 - [x] Integrar cupom de desconto com pedido
