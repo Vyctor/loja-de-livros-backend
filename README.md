@@ -31,16 +31,6 @@ O objetivo consiste em criar uma loja de livros online similar a Casa do Código
 - [x] Integração com o serviço de pagamentos
 - [x] Criação de domain events para disparar eventos de acordo com o status da compra
 - [x] Implementar cupom de desconto
-- [ ] Integrar cupom de desconto com pedido
-- [ ] Envio de e-mail fake para o usuários de acordo com o status da compra
-- [ ] Separação de entidades de domínio e entidades de banco de dados
+- [x] Integrar cupom de desconto com pedido
 - [ ] Documentação com Swagger
-- [ ] Cache de rotas
 - [ ] Testes automatizados
-- [ ] Eventos de frete
-  - [ ] Criar frete
-  - [ ] Status de despachado
-  - [ ] Status de entregue
-- [ ] Integração com o serviço de frete
-- [ ] Cancelamento de um pedido
-- [ ] Devolução de um pedido
