@@ -5,8 +5,13 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAuthorDto {
+  @ApiProperty({
+    example: 'example@mail.com',
+    type: String,
+  })
   @IsEmail(
     {},
     {
@@ -15,6 +20,10 @@ export class CreateAuthorDto {
   )
   email: string;
 
+  @ApiProperty({
+    example: "Author's name",
+    type: String,
+  })
   @IsString({
     message: 'Nome inválido, deve ser uma string',
   })
@@ -26,6 +35,10 @@ export class CreateAuthorDto {
   })
   name: string;
 
+  @ApiProperty({
+    example: "Author's description",
+    type: String,
+  })
   @IsString({
     message: 'Descrição inválida, deve ser uma string',
   })
